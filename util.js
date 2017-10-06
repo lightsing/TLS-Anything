@@ -18,12 +18,35 @@ async function create(options) {
         from.pipe(to);
         to.pipe(from);
     })
-
-    const port = await getPort();
-    
+    const port = await getPort();    
     server.listen(port);
+    return {
+        'server': server,
+        'port': port
+    };
+}
+
+function check(socket, request) {
+    request.host = request.host || config.server.config.defaultHost;
+    if (!request.port) {
+        socket.emit('err', {err: 'Port not set.'});
+    }
+    if (config.server.config.whitelist) {
+        const addressAllow = config.server.config.addressList;
+        const portAllow = config.server.config.portList;
+        if (addressAllow.includes(request.host)
+            && portAllow.includes(request.port)) {
+            return true;
+        } else {
+            socket.emit('err', {err: 'Access Denied.'});
+            return false;
+        }
+    } else {
+        return true;
+    }
 }
 
 module.exports = {
-    create: create
+    create: create,
+    check: check
 }
