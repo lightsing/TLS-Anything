@@ -107,6 +107,32 @@ function startServer() {
     income.listen(config.server.listen);
 }
 
+function startClient() {
+    config.client.remotes.forEach((remote) => {
+        const server = net.createServer((socket) => {
+            const controlSocket = net.connect({host:remote.remote, port:remote.port});
+            const data = readline.createInterface(controlSocket, controlSocket);
+            data.question(JSON.stringify({create:true, host: remote.dhost, port: remote.dport}) + '\n', (res) => {
+                res = JSON.parse(res);
+                if (res.err) {
+                    console.log(res.err);
+                    socket.destroy();
+                } else {
+                    const relay = tls.connect({host:'playground.sustc.us', port:res.port});
+                    socket.pipe(relay);
+                    relay.pipe(socket);
+                }
+            });
+            socket.on('close', () => {
+                controlSocket.write(JSON.stringify({destroy:true}) + '\n');
+            })
+        });
+
+        server.listen( remote.lport);
+    });
+}
+
 module.exports = {
-    startServer: startServer
+    startServer: startServer,
+    startClient: startClient
 }
