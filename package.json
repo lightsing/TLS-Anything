@@ -1,0 +1,22 @@
+{
+  "name": "tls-anything",
+  "version": "0.1.0",
+  "description": "Make any connection goes over tls",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lightsing/TLS-Anything.git"
+  },
+  "author": "lightsing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lightsing/TLS-Anything/issues"
+  },
+  "homepage": "https://github.com/lightsing/TLS-Anything#readme",
+  "dependencies": {
+    "get-port": "^3.2.0"
+  }
+}
