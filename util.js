@@ -118,7 +118,10 @@ function startClient() {
                     console.log(res.err);
                     socket.destroy();
                 } else {
-                    const relay = tls.connect({host:'playground.sustc.us', port:res.port});
+                    var options = Object.assign({}, config.client.tlsOptions);
+                    options.host = remote.remote;
+                    options.port = res.port;
+                    const relay = tls.connect(options);
                     socket.pipe(relay);
                     relay.pipe(socket);
                 }
