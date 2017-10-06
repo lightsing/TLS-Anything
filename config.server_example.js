@@ -23,7 +23,22 @@ const options = {
         }
     },
     client: {
-        enable: false
+        enable: true,
+        tlsOptions: {
+            // key: fs.readFileSync('/path/to/client/cert/key'),
+            // cert: fs.readFileSync('/path/to/client/cert'),
+            // ca: [ fs.readFileSync('/path/to/ca/cert') ]  // client cert verify
+        },
+        remotes: [
+            {
+                lhost: '127.0.0.1',  // listening host
+                lport: 8080,         // listening port
+                remote: '127.0.0.1', // relay host
+                port: 1443,          // communicate port
+                dhost: '172.18.1.3', // target host
+                dport: 80            // target port
+            }
+        ]
     }
 }
 
