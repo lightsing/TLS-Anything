@@ -1,21 +1,29 @@
+'use strict';
+
 const tls = require('tls');
 const net = require('net');
 const fs = require('fs');
 
-const options = {
-  key: fs.readFileSync('/Users/lightsing/.acme.sh/playground.sustc.us/playground.sustc.us.key'),
-  cert: fs.readFileSync('/Users/lightsing/.acme.sh/playground.sustc.us/fullchain.cer'),
-};
+const getPort = require('get-port');
 
-var server = tls.createServer(options, (from) => {
-    var to = net.createConnection({
-        host: '172.18.1.3',
-        port: 80
-    });
-    from.pipe(to);
-    to.pipe(from);
-})
+const config = require('./config');
 
-server.listen(8080, () => {
-    console.log('server bound');
-});
+async function create(options) {
+    const connect = net.createConnection;
+    if (options.isTLS) {
+        connect = tls.connect;
+    }
+    const server = tls.createServer(options.serverOptions, (from) => {
+        var to = connect(options.remote);
+        from.pipe(to);
+        to.pipe(from);
+    })
+
+    const port = await getPort();
+    
+    server.listen(port);
+}
+
+module.exports = {
+    create: create
+}
